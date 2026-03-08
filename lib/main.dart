@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:messenger/config/theme/app_theme.dart';
 import 'package:messenger/presentation/screens/auth/login_screen.dart';
+import 'package:messenger/presentation/screens/auth/signup_screen.dart';
 
 void main() {
   runApp(const MyApp());

@@ -2,28 +2,35 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/core/common/custom_button.dart';
 import 'package:messenger/core/common/custom_text_field.dart';
-import 'package:messenger/presentation/screens/auth/signup_screen.dart';
+import 'package:messenger/presentation/screens/auth/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   void _disposeControllers() {
     _emailController.dispose();
     _passwordController.dispose();
+    _nameController.dispose();
+    _usernameController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("")),
       body: SafeArea(
         child: Form(
           child: SingleChildScrollView(
@@ -31,61 +38,61 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 30),
                 Text(
-                  "Welcome back",
+                  "Create an account",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 10),
                 Text(
-                  "Sign in to continue",
+                  "Please fill the form to continue",
                   style: Theme.of(
                     context,
                   ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30),
+                CustomTextField(
+                  controller: _nameController,
+                  hintText: "Full Name",
+                  prefixIcon: const Icon(Icons.person_outline),
+                ),
+                SizedBox(height: 16),
+                CustomTextField(
+                  controller: _usernameController,
+                  hintText: "Username",
+                  prefixIcon: const Icon(Icons.alternate_email_outlined),
+                ),
+                SizedBox(height: 16),
                 CustomTextField(
                   controller: _emailController,
                   hintText: "Email",
                   prefixIcon: const Icon(Icons.email_outlined),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
+                CustomTextField(
+                  controller: _phoneController,
+                  hintText: "Phone Number",
+                  prefixIcon: const Icon(Icons.phone_outlined),
+                ),
+                SizedBox(height: 16),
                 CustomTextField(
                   controller: _passwordController,
                   hintText: "Password",
                   prefixIcon: const Icon(Icons.lock_outline),
-                  suffixIcon: const Icon(Icons.visibility),
                   obscureText: true,
                 ),
-                const SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    "Forget password?",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                CustomButton(
-                  onPressed: () {
-                    // Handle login logic
-                  },
-                  text: "Login",
-                ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30),
+                CustomButton(onPressed: () {}, text: "Create Account"),
+                SizedBox(height: 25),
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      text: "Don't have an account? ",
+                      text: "Already have an account? ",
                       style: Theme.of(context).textTheme.bodyMedium,
                       children: [
                         TextSpan(
-                          text: "Sign Up",
+                          text: "Sign In",
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: Theme.of(context).primaryColor,
@@ -93,12 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const SignupScreen(),
-                                  ),
-                                );
+                                Navigator.pop(context);
                               },
                         ),
                       ],
