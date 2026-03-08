@@ -12,13 +12,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  final _formKey = GlobalKey<FormState>();
+  
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+
+  
+  @override
   void _disposeControllers() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
     super.dispose();
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Email is required";
+    }
+    if (!RegExp(
+      r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+    ).hasMatch(value)) {
+      return "Please enter a valid email";
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Password is required";
+    }
+    if (value.length < 6) {
+      return "Password must be at least 6 characters";
+    }
+    return null;
   }
 
   @override
@@ -26,6 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: Form(
+          key: _formKey,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -50,11 +83,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _emailController,
                   hintText: "Email",
                   prefixIcon: const Icon(Icons.email_outlined),
+                  focusNode: _emailFocus,
+                  validator: _validateEmail,
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(
                   controller: _passwordController,
                   hintText: "Password",
+                  focusNode: _passwordFocus,
+                  validator: _validatePassword,
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: const Icon(Icons.visibility),
                   obscureText: true,
@@ -73,7 +110,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 30),
                 CustomButton(
                   onPressed: () {
-                    // Handle login logic
+                    FocusScope.of(context).unfocus();
+                    if (_formKey.currentState?.validate() ?? false) {
+                      // Perform login action
+                    } 
                   },
                   text: "Login",
                 ),
