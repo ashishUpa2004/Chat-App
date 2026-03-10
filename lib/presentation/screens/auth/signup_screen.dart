@@ -152,9 +152,21 @@ class _SignupScreenState extends State<SignupScreen> {
                   controller: _passwordController,
                   hintText: "Password",
                   focusNode: _passwordFocus,
+                  obscureText: !_isPasswordVisible,
                   validator: _validatePassword,
                   prefixIcon: const Icon(Icons.lock_outline),
-                  obscureText: true,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
                 ),
                 SizedBox(height: 30),
                 CustomButton(

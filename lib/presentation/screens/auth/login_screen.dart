@@ -17,6 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
   
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  
+  bool _isPasswordVisible = false;
 
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
@@ -91,10 +93,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _passwordController,
                   hintText: "Password",
                   focusNode: _passwordFocus,
+                  obscureText: !_isPasswordVisible,
                   validator: _validatePassword,
                   prefixIcon: const Icon(Icons.lock_outline),
-                  suffixIcon: const Icon(Icons.visibility),
-                  obscureText: true,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Align(
