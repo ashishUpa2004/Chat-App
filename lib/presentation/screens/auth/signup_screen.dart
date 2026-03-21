@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/core/common/custom_button.dart';
 import 'package:messenger/core/common/custom_text_field.dart';
+import 'package:messenger/data/repositories/auth_repository.dart';
+import 'package:messenger/data/services/service_locator.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -90,6 +92,28 @@ class _SignupScreenState extends State<SignupScreen> {
     return null;
   }
 
+  Future<void> handleSignup() async {
+    FocusScope.of(context).unfocus();
+    if (_formKey.currentState?.validate() ?? false) {
+      try{
+        getIt<AuthRepository>().signUp(
+          fullName: _nameController.text.trim(),
+          username: _usernameController.text.trim(),
+          email: _emailController.text.trim(),
+          phoneNumber: _phoneController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+      }
+      catch(e){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    }else{
+      print("Form is not valid");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,12 +194,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 SizedBox(height: 30),
                 CustomButton(
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    if (_formKey.currentState?.validate() ?? false) {
-                      
-                    }
-                  },
+                  onPressed: handleSignup,
                   text: "Create Account",
                 ),
                 SizedBox(height: 25),
