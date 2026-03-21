@@ -1,3 +1,5 @@
+// ignore_for_file: override_on_non_overriding_member
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/core/common/custom_button.dart';
@@ -29,6 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _passwordFocus = FocusNode();
 
   @override
+  // ignore: unused_element
   void _disposeControllers() {
     _emailController.dispose();
     _passwordController.dispose();

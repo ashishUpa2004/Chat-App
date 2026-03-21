@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/core/common/custom_button.dart';
@@ -25,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   
   @override
+  // ignore: override_on_non_overriding_member
   void _disposeControllers() {
     _emailController.dispose();
     _passwordController.dispose();
