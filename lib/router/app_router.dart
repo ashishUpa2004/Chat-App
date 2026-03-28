@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppRouter {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  NavigatorState? get _navigator => navigatorKey.currentState;
+  NavigatorState? get _navigator => navigatorKey.currentState;// error was here, it was returning null because navigatorKey was not set in MaterialApp
 
   void pop<T>([T? result]) {
     _navigator?.pop(result);
