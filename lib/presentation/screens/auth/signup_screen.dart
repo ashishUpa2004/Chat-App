@@ -4,8 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:messenger/core/common/custom_button.dart';
 import 'package:messenger/core/common/custom_text_field.dart';
-import 'package:messenger/data/repositories/auth_repository.dart';
 import 'package:messenger/data/services/service_locator.dart';
+import 'package:messenger/logic/cubits/auth/auth_cubit.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -99,7 +99,7 @@ class _SignupScreenState extends State<SignupScreen> {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState?.validate() ?? false) {
       try{
-        getIt<AuthRepository>().signUp(
+        getIt<AuthCubit>().signUp(
           fullName: _nameController.text.trim(),
           username: _usernameController.text.trim(),
           email: _emailController.text.trim(),

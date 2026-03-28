@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:messenger/config/theme/app_theme.dart';
 import 'package:messenger/data/services/service_locator.dart';
 import 'package:messenger/presentation/screens/auth/login_screen.dart';
+import 'package:messenger/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Messenger',
+      navigatorKey: getIt<AppRouter>().navigatorKey,
       theme: AppTheme.lightTheme,
       home: const LoginScreen(),
     );
