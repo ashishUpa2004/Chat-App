@@ -6,7 +6,7 @@ import 'package:messenger/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await setupServiceLocator(); // ✅ handles everything
+  await setupServiceLocator(); 
   runApp(const MyApp());
 }
 

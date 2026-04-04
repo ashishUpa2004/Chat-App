@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:messenger/data/services/service_locator.dart';
+import 'package:messenger/logic/cubits/auth/auth_cubit.dart';
+import 'package:messenger/presentation/screens/auth/login_screen.dart';
+import 'package:messenger/router/app_router.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -8,12 +12,16 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Handle logout logic here
+          InkWell(
+            onTap: () async{
+              await getIt<AuthCubit>().signOut();
+              getIt<AppRouter>().pushAndRemoveUntil(const LoginScreen());
             },
-          ),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Icon(Icons.logout),
+            ),
+          )
         ],
       ),
       body: const Center(

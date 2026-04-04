@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:messenger/core/common/custom_button.dart';
 import 'package:messenger/core/common/custom_text_field.dart';
+import 'package:messenger/core/utils/ui_utils.dart';
 import 'package:messenger/data/services/service_locator.dart';
 import 'package:messenger/logic/cubits/auth/auth_cubit.dart';
 import 'package:messenger/logic/cubits/auth/auth_state.dart';
@@ -66,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState?.validate() ?? false) {
       try {
-        getIt<AuthCubit>().signIn(
+        await getIt<AuthCubit>().signIn(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
@@ -82,116 +83,122 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
+    return BlocConsumer<AuthCubit, AuthState>(
       bloc: getIt<AuthCubit>(),
-        listener: (context, state) {
-          print("STATE: ${state.status}"); // 🔥 ADD THIS
-          if (state.status == AuthStatus.authenticated) {
-            print("NAVIGATING TO HOME"); // 🔥 ADD THIS
-            getIt<AppRouter>().pushAndRemoveUntil(
-              const HomeScreen(),
-            );
-          } 
-        },
-      child: Scaffold(
-        body: SafeArea(
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 30),
-                  Text(
-                    "Welcome back",
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+      listener: (context, state) {
+        if (state.status == AuthStatus.authenticated) {
+          getIt<AppRouter>().pushAndRemoveUntil(const HomeScreen());
+        } else if (state.status == AuthStatus.error && state.error != null) {
+          UiUtils.showSnackBar(context, message: state.error!);
+        }
+      },
+      builder: (BuildContext context, AuthState state) {
+        return Scaffold(
+          body: SafeArea(
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 30),
+                    Text(
+                      "Welcome back",
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    "Sign in to continue",
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
-                  ),
-                  const SizedBox(height: 30),
-                  CustomTextField(
-                    controller: _emailController,
-                    hintText: "Email",
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    focusNode: _emailFocus,
-                    validator: _validateEmail,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    controller: _passwordController,
-                    hintText: "Password",
-                    focusNode: _passwordFocus,
-                    obscureText: !_isPasswordVisible,
-                    validator: _validatePassword,
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
+                    const SizedBox(height: 16),
+                    Text(
+                      "Sign in to continue",
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "Forget password?",
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w600,
+                    const SizedBox(height: 30),
+                    CustomTextField(
+                      controller: _emailController,
+                      hintText: "Email",
+                      prefixIcon: const Icon(Icons.email_outlined),
+                      focusNode: _emailFocus,
+                      validator: _validateEmail,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      controller: _passwordController,
+                      hintText: "Password",
+                      focusNode: _passwordFocus,
+                      obscureText: !_isPasswordVisible,
+                      validator: _validatePassword,
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
-                  CustomButton(onPressed: handleLogin, text: "Login"),
-                  const SizedBox(height: 30),
-                  Center(
-                    child: RichText(
-                      text: TextSpan(
-                        text: "Don't have an account? ",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        children: [
-                          TextSpan(
-                            text: "Sign Up",
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const SignupScreen(),
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "Forget password?",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    CustomButton(
+                      onPressed: handleLogin,
+                      text: "Login",
+                      child: state.status == AuthStatus.loading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : const Text("Login", style: TextStyle(color: Colors.white),),
+                    ),
+                    const SizedBox(height: 30),
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Don't have an account? ",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          children: [
+                            TextSpan(
+                              text: "Sign Up",
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                );
-                              },
-                          ),
-                        ],
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignupScreen(),
+                                    ),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

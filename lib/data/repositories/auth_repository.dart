@@ -22,10 +22,10 @@ class AuthRepository extends BaseRepository {
       // if (emailExists) {
       //   throw "An account with the same email already exists";
       // }
-      // final phoneNumberExists = await checkPhoneExists(formattedPhoneNumber);
-      // if (phoneNumberExists) {
-      //   throw "An account with the same phone already exists";
-      // }
+      final phoneNumberExists = await checkPhoneExists(formattedPhoneNumber);
+      if (phoneNumberExists) {
+        throw "An account with the same phone already exists";
+      }
 
       final userCredential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -59,21 +59,21 @@ class AuthRepository extends BaseRepository {
   //   }
   // }
 
-  // Future<bool> checkPhoneExists(String phoneNumber) async {
-  //   try {
-  //     final formattedPhoneNumber =
-  //         phoneNumber.replaceAll(RegExp(r'\s+'), "".trim());
-  //     final querySnapshot = await firestore
-  //         .collection("users")
-  //         .where("phoneNumber", isEqualTo: formattedPhoneNumber)
-  //         .get();
+  Future<bool> checkPhoneExists(String phoneNumber) async {
+    try {
+      final formattedPhoneNumber =
+          phoneNumber.replaceAll(RegExp(r'\s+'), "".trim());
+      final querySnapshot = await firestore
+          .collection("users")
+          .where("phoneNumber", isEqualTo: formattedPhoneNumber)
+          .get();
 
-  //     return querySnapshot.docs.isNotEmpty;
-  //   } catch (e) {
-  //     print("Error checking phone number: $e");
-  //     return false;
-  //   }
-  // }
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print("Error checking phone number: $e");
+      return false;
+    }
+  }
 
   Future<UserModel> signIn({
     required String email,
