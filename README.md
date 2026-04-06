@@ -31,7 +31,8 @@ A real-time, cross-platform chat application built with **Flutter** and **Fireba
 * **Dependency Injection:** GetIt
 
 ## 📂 lib folder Structure
-lib
+![alt text](image.png)
+<!-- lib
    ├───config
    │   └───theme
    ├───core
@@ -52,6 +53,6 @@ lib
    │   ├───screens
    │   │   └───auth
    │   └───widgets
-   └───router
+   └───router -->
 
 ## UI Screenshots
