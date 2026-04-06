@@ -56,3 +56,7 @@ A real-time, cross-platform chat application built with **Flutter** and **Fireba
    └───router -->
 
 ## UI Screenshots
+
+
+## Support
+* If you like this project, give it a ⭐ on GitHub!
