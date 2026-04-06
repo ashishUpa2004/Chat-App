@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:messenger/data/repositories/auth_repository.dart';
+import 'package:messenger/data/repositories/chat_repository.dart';
 import 'package:messenger/data/repositories/contact_repository.dart';
 import 'package:messenger/data/services/service_locator.dart';
 import 'package:messenger/logic/cubits/auth/auth_cubit.dart';
+import 'package:messenger/presentation/chat/chat_message_screen.dart';
 import 'package:messenger/presentation/screens/auth/login_screen.dart';
+import 'package:messenger/presentation/widgets/chat_list_tile.dart';
 import 'package:messenger/router/app_router.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,9 +18,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final ContactRepository _contactRepository;
+  late final ChatRepository _chatRepository;
+  late final String _currentUserId;
+
   @override
   void initState() {
     _contactRepository = getIt<ContactRepository>();
+    _chatRepository = getIt<ChatRepository>();
+    _currentUserId = getIt<AuthRepository>().currentUser?.uid ?? "";
+
     super.initState();
   }
 
@@ -64,7 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Text(contact["name"][0].toUpperCase()),
                                 ),
                                 title: Text(contact["name"]),
-                                onTap: () {},
+                                onTap: () {
+                                  getIt<AppRouter>().push(
+                                    ChatMessageScreen(
+                                      receiverId: contact['id'],
+                                      receiverName: contact['name'],
+                                    ),
+                                  );
+                                },
                               );
                             });
                       }),
@@ -75,32 +92,67 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Chats",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-        ),
+        title: const Text("Chats"),
         actions: [
           InkWell(
             onTap: () async {
               await getIt<AuthCubit>().signOut();
               getIt<AppRouter>().pushAndRemoveUntil(const LoginScreen());
             },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Icon(Icons.logout),
+            child: const Icon(
+              Icons.logout,
             ),
-          ),
+          )
         ],
       ),
-      body: const Center(child: Text("Welcome to the Home Screen!")),
+      body: StreamBuilder(
+          stream: _chatRepository.getChatRooms(_currentUserId),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              print(snapshot.error);
+              return Center(
+                child: Text("error:${snapshot.error}"),
+              );
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final chats = snapshot.data!;
+            if (chats.isEmpty) {
+              return const Center(
+                child: Text("No recent chats"),
+              );
+            }
+            return ListView.builder(
+                itemCount: chats.length,
+                itemBuilder: (context, index) {
+                  final chat = chats[index];
+                  return ChatListTile(
+                    chat: chat,
+                    currentUserId: _currentUserId,
+                    onTap: () {
+                      final otherUserId = chat.participants
+                          .firstWhere((id) => id != _currentUserId);
+                      print("home screen current user id $_currentUserId");
+                      final outherUserName =
+                          chat.participantsName?[otherUserId] ?? "Unknown";
+                      getIt<AppRouter>().push(ChatMessageScreen(
+                          receiverId: otherUserId,
+                          receiverName: outherUserName));
+                    },
+                  );
+                });
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showContactsList(context),
-        child: Icon(Icons.chat, color: Colors.white),
+        child: const Icon(
+          Icons.chat,
+          color: Colors.white,
+        ),
       ),
     );
   }
