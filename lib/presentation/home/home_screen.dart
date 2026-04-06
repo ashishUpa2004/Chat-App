@@ -98,13 +98,16 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("Chats"),
         actions: [
-          InkWell(
-            onTap: () async {
-              await getIt<AuthCubit>().signOut();
-              getIt<AppRouter>().pushAndRemoveUntil(const LoginScreen());
-            },
-            child: const Icon(
-              Icons.logout,
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: InkWell(
+              onTap: () async {
+                await getIt<AuthCubit>().signOut();
+                getIt<AppRouter>().pushAndRemoveUntil(const LoginScreen());
+              },
+              child: const Icon(
+                Icons.logout,
+              ),
             ),
           )
         ],

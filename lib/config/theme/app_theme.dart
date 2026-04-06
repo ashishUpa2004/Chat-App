@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Define the primary color
-  static const primaryColor = Color(0xff692960);
+  static const primaryColor = Color.fromARGB(255, 36, 93, 151);
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -10,7 +10,7 @@ class AppTheme {
 
     // Colors
     colorScheme: const ColorScheme.light(
-      primary: primaryColor,
+      primary: Color.fromARGB(255, 36, 93, 151),
       secondary: Color(0xFF8E8E93),
       surface: Colors.white,
       onSurface: Colors.black,
